@@ -10,10 +10,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
-import os
+import os, sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# 插入系统的导包路径（目的：1. 注册子应用时，写法方便点 ,2.修改Django认证模式类时，必须以 应用名.模型名 的形式）
+sys.path.insert(0, os.path.join(BASE_DIR, "apps"))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -24,7 +26,8 @@ SECRET_KEY = '0+tcgx^)yq2tp4ir%_*+2(qr2bgl23ol46hufpq(^n63+c8r58'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# 运行哪些域名访问后端
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'www.meiduo.site', 'api.meiduo.site']
 
 # Application definition
 
@@ -35,10 +38,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework'  # DRF
+    'rest_framework',  # DRF
+    'users.apps.UsersConfig',  # 用户模块
+    'verifications.apps.VerificationsConfig',  # 用户模块
+    'corsheaders',  # CORS,解决跨域
+
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',  # 最外层中间件
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -123,16 +131,23 @@ STATIC_URL = '/static/'
 # 配置redis数据库
 
 CACHES = {
-    "default": {
+    "default": {  # 缓存省市区数据
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": "redis://127.0.0.1:6379/0",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
     },
-    "session": {
+    "session": {  # 缓存session
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+    "verify_codes": {  # 存储验证码
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/2",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
@@ -190,3 +205,15 @@ REST_FRAMEWORK = {
     # 异常处理
     'EXCEPTION_HANDLER': 'meiduo_mall.utils.exceptions.exception_handler',
 }
+
+# 修改Django认证系统的用户模型类
+AUTH_USER_MODEL = 'users.User'  # 应用名.模型名  ,实际是 users.models.User
+
+# CORS 白名单
+CORS_ORIGIN_WHITELIST = (
+    'http://127.0.0.1:8080',
+    'http://localhost:8080',
+    'http://www.meiduo.site:8080',
+    'http://api.meiduo.site:8080',
+)
+CORS_ALLOW_CREDENTIALS = True  # 跨域时允许携带cookie

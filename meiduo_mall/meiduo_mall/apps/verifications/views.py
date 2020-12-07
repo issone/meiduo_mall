@@ -6,8 +6,8 @@ from rest_framework import status
 from django_redis import get_redis_connection
 from rest_framework.response import Response
 
+from celery_tasks.sms.tasks import send_sms_code
 from meiduo_mall.apps.verifications import constants
-from meiduo_mall.libs.yuntongxun.sms import CCP
 
 logger = logging.getLogger('django')
 
@@ -36,7 +36,7 @@ class SMSCodeView(APIView):
         pl.setex(f'send_flag_{mobile}', constants.SEND_SMS_CODE_INTERVAL, 1)
         # 执行管道
         pl.execute()
+        # send_sms_code(mobile, sms_code)       # 调用普通函数
+        send_sms_code.delay(mobile, sms_code)  # 触发异步任务
 
-        # 利用容联云通讯发送短信验证码
-        CCP().send_template_sms(mobile, [sms_code, constants.SMS_CODE_REDIS_EXPIRES // 60], 1)
         return Response({'message': 'ok'})

@@ -21,6 +21,9 @@ class SMSCodeView(APIView):
         redis_conn = get_redis_connection("verify_codes")
         # 判断当前手机号，60秒是否已发送过验证码
         send_flag = redis_conn.get(f"send_flag_{mobile}")
+        # pl = redis_conn.pipeline()
+        # pl.get(f'send_flag_{mobile}')
+        # send_flag = pl.execute()[0] # 元组
         if send_flag:
             return Response({"message": "手机号频繁发送短信"}, status=status.HTTP_400_BAD_REQUEST)
 

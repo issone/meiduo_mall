@@ -222,6 +222,9 @@ CORS_ALLOW_CREDENTIALS = True  # 跨域时允许携带cookie
 JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),  # JWT有效期
 
-    # 修改JWT登录视图的构造响应数据的函数
+    # 修改JWT登录视图的构造响应数据  的函数
     'JWT_RESPONSE_PAYLOAD_HANDLER': 'users.utils.jwt_response_payload_handler',
 }
+
+# 修改Django用户认证后端类
+AUTHENTICATION_BACKENDS = ['users.utils.UsernameMobileAuthBackend']

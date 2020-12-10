@@ -40,8 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',  # DRF
     'users.apps.UsersConfig',  # 用户模块
-    'verifications.apps.VerificationsConfig',  # 用户模块
+    'verifications.apps.VerificationsConfig',  # 认证模块，没有建表，可以不引入
     'corsheaders',  # CORS,解决跨域
+
+    'oauth.apps.OauthConfig',  # QQ模块
 
 ]
 
@@ -228,3 +230,8 @@ JWT_AUTH = {
 
 # 修改Django用户认证后端类
 AUTHENTICATION_BACKENDS = ['users.utils.UsernameMobileAuthBackend']
+
+# QQ登录参数
+QQ_CLIENT_ID = os.environ.get("QQ_CLIENT_ID", '101514053')
+QQ_CLIENT_SECRET = os.environ.get("QQ_CLIENT_SECRET", '1075e75648566262ea35afa688073012')
+QQ_REDIRECT_URI = os.environ.get("QQ_REDIRECT_URI", 'http://www.meiduo.site:8080/oauth_callback.html')

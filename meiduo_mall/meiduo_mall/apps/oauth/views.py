@@ -100,8 +100,6 @@ class QQAuthUserView(APIView):
             'username': user.username,
             'user_id': user.id
         })
-        # 在此调用合并购物车函数
-        merge_cart_cookie_to_redis(request, user, response)
 
         # 响应
         return response

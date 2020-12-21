@@ -1,9 +1,11 @@
-from rest_framework.generics import CreateAPIView
+from rest_framework import status
+from rest_framework.generics import CreateAPIView, RetrieveAPIView, UpdateAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 
 from .models import User
-from .serializers import CreateUserSerializer
+from .serializers import CreateUserSerializer, UserDetailSerializer, EmailSerializer
 
 
 # Create your views here.
@@ -41,3 +43,46 @@ class MobileCountView(APIView):
         }
         # 响应
         return Response(data)
+
+
+# GET /user/
+class UserDetailView(RetrieveAPIView):
+    """
+    用户详情
+    """
+    serializer_class = UserDetailSerializer
+    permission_classes = [IsAuthenticated]  # 指定权限,只有通过认证的用户才能访问当前视图
+
+    def get_object(self):
+        """重写此方法返回 要展示的用户模型对象"""
+        return self.request.user
+
+
+# PUT /email/
+class EmailView(UpdateAPIView):
+    """更新用户邮箱"""
+    permission_classes = [IsAuthenticated]
+    serializer_class = EmailSerializer
+
+    def get_object(self):
+        return self.request.user
+
+
+class EmailVerifyView(APIView):
+    """激活用户邮箱"""
+
+    def get(self, request):
+        # 获取前端查询字符串中传入的token
+        token = request.query_params.get('token')
+        if not token:
+            return Response({'message': '缺少token'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # 把token解密 并查询对应的user
+        user = User.check_verify_email_token(token)
+        # 修改当前user的email_active为True
+        if user is None:
+            return Response({'message': '激活失败'}, status=status.HTTP_400_BAD_REQUEST)
+        user.email_active = True
+        user.save()
+        # 响应
+        return Response({'message': 'ok'})

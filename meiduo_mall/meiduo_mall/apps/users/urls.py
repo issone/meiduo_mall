@@ -12,4 +12,12 @@ urlpatterns = [
     url(r'^mobiles/(?P<mobile>1[3-9]\d{9})/count/$', views.MobileCountView.as_view()),
     # JWT登录
     url(r'^authorizations/$', obtain_jwt_token),  # 内部认证代码还是Django,登录成功默认只返回生成的token,缺少username和user_id
+
+    # 获取用户详情
+    url(r'^user/$', views.UserDetailView.as_view()),
+
+    # 更新邮箱
+    url(r'^email/$', views.EmailView.as_view()),
+    # 验证邮箱
+    url(r'^emails/verification/$', views.EmailVerifyView.as_view()),
 ]

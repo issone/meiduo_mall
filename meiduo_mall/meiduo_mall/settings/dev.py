@@ -38,12 +38,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'rest_framework',  # DRF
-    'users.apps.UsersConfig',  # 用户模块
     'verifications.apps.VerificationsConfig',  # 认证模块，没有建表，可以不引入
     'corsheaders',  # CORS,解决跨域
 
+    'users.apps.UsersConfig',  # 用户模块
     'oauth.apps.OauthConfig',  # QQ模块
+    'areas.apps.AreasConfig',  # 省市区模块
 
 ]
 
@@ -254,3 +256,11 @@ EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", 'itcast99@163.com')
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", 'python99')
 # 收件人看到的发件人
 EMAIL_FROM = os.environ.get("EMAIL_FROM", 'python<itcast99@163.com>')
+
+# DRF扩展配置省市区数据缓存
+REST_FRAMEWORK_EXTENSIONS = {
+    # 缓存时间
+    'DEFAULT_CACHE_RESPONSE_TIMEOUT': 60 * 60,
+    # 缓存存储
+    'DEFAULT_USE_CACHE': 'default',
+}

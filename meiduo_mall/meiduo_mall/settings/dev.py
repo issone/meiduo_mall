@@ -247,7 +247,6 @@ QQ_CLIENT_ID = os.environ.get("QQ_CLIENT_ID", '101514053')
 QQ_CLIENT_SECRET = os.environ.get("QQ_CLIENT_SECRET", '1075e75648566262ea35afa688073012')
 QQ_REDIRECT_URI = os.environ.get("QQ_REDIRECT_URI", 'http://www.meiduo.site:8080/oauth_callback.html')
 
-
 # 以下是邮件配置
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.163.com'
@@ -266,3 +265,10 @@ REST_FRAMEWORK_EXTENSIONS = {
     # 缓存存储
     'DEFAULT_USE_CACHE': 'default',
 }
+
+# FastDFS
+FDFS_BASE_URL = 'http://10.0.0.131:8888/'
+FDFS_CLIENT_CONF = os.path.join(BASE_DIR, 'utils/fastdfs/client.conf')
+
+# django文件存储
+DEFAULT_FILE_STORAGE = 'meiduo_mall.utils.fastdfs.fdfs_storage.FastDFSStorage'

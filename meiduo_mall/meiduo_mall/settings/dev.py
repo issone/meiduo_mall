@@ -296,3 +296,6 @@ CRONJOBS = [
     ('*/1 * * * *', 'contents.crons.generate_static_index_html',
      '>> /Users/mac/projects/meiduo_mall/meiduo_mall/logs/crontab.log')
 ]
+
+# 解决crontab中文问题
+CRONTAB_COMMAND_PREFIX = 'LANG_ALL=zh_cn.UTF-8'
